@@ -6,7 +6,7 @@ from numpy.typing import ArrayLike
 class Kernel:
     def __init__(self, params: dict):
         self.params = params
-    
+
     def kernel_function(self, x1, x2):
         pass
 
@@ -20,19 +20,20 @@ class IdentityKernel(Kernel):
         super().__init__(params)
 
     def kernel_function(self, x1, x2):
-        return self.params["scale"] * np.eye(len(x1)) 
+        return self.params["scale"] * np.eye(len(x1))
+
 
 class GaussianKernel(Kernel):
     def __init__(self, amplitude, length_scale):
-        params = {
-            "sigma": amplitude,
-            "l": length_scale
-        }
+        params = {"sigma": amplitude, "l": length_scale}
         super().__init__(params)
-    
-    def kernel_function(self, x1, x2):
-        x1 = np.expand_dims(x1, axis=0)
-        x2 = np.expand_dims(x2, axis=1)
-        s, l = self.params["sigma"], self.params["l"]
-        return s * np.exp(-0.5 * (x1 - x2)**2/ l**2) 
 
+    def kernel_function(self, x1, x2):
+        if len(x1.shape) == 1:
+            x1 = np.expand_dims(x1, axis=1)
+
+        if len(x2.shape) == 1:
+            x2 = np.expand_dims(x2, axis=0)
+
+        s, l = self.params["sigma"], self.params["l"]
+        return s * np.exp(-0.5 * (x1 - x2) ** 2 / l**2)
