@@ -1,0 +1,22 @@
+repos:
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+        files: \.py$
+  - repo: https://github.com/nbQA-dev/nbQA
+    rev: 1.9.1
+    hooks:
+      - id: nbqa-black
+        name: Format Notebooks with Black
+        entry: nbqa black
+        language: python
+        files: \.ipynb$
+  - repo: local
+    hooks:
+      - id: pytest
+        args: ["-m", "not slow", "tests/"]
+        name: Run Tests
+        entry: pytest
+        language: system
+        types: [python]
