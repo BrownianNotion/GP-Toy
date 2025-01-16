@@ -7,7 +7,7 @@ class Kernel:
     def __init__(self, params: dict):
         self.params = params
     
-    def kernel_function(x1, x2):
+    def kernel_function(self, x1, x2):
         pass
 
     def evaluate(self, x1, x2):
