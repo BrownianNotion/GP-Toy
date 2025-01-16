@@ -35,18 +35,19 @@ def test_gaussian_kernel():
 
 @patch("matplotlib.pyplot.show")
 def test_gaussian_process_fit(mock_show):
-    N = 6
+# def test_gaussian_process_fit():
+    N = 20
     X_train = np.linspace(0, 1, N)
     x_test = np.array([0.5, 1.1])
     s = 1.0
-    l = 1.0
+    l = 0.2
     kernel = GaussianKernel(s, l)
 
     y_train = np.random.multivariate_normal(
         mean=np.zeros(len(X_train)), cov=kernel.evaluate(X_train, X_train)
     )
 
-    gp = GaussianProcess(kernel)
+    gp = GaussianProcess(kernel=kernel, mean=None, sigma_noise=0.2)
     gp.fit(X_train, y_train)
     train_error_bars = gp.get_train_error_bars()
 
@@ -57,8 +58,12 @@ def test_gaussian_process_fit(mock_show):
         ax.scatter(X_train, y_train, color="blue", label="train")
         ax.scatter(x_test, y_predict, color="orange", label="predict")
         ax.fill_between(
-            X_train, y_train - train_error_bars, y_train + train_error_bars, color="blue", alpha=0.2
+            X_train,
+            y_train - train_error_bars,
+            y_train + train_error_bars,
+            color="blue",
+            alpha=0.2,
         )
         plt.show()
-    
+
     plot_fn()

@@ -3,12 +3,12 @@ from .kernel import Kernel
 
 
 class GaussianProcess:
-    def __init__(self, kernel: Kernel, mean=None, seed=42):
+    def __init__(self, kernel: Kernel, mean=None, sigma_noise=1.0, seed=42):
         self.mean = 0.0 if mean is None else mean
         self.kernel = kernel
         self.K_XX = None  # training Gram matrix
         self.K_XX_inv = None
-        # TODO: add sigma param for noise
+        self.sigma_noise = sigma_noise
 
         self.X_train = None
         self.y_train = None
@@ -19,14 +19,16 @@ class GaussianProcess:
     def fit(self, X_train, y_train):
         # TODO: change to cholesky implementation for efficiency
         self.K_XX = self.kernel.evaluate(X_train, X_train)
-        self.K_XX_inv = np.linalg.inv(self.K_XX)
+        self.K_XX_inv = np.linalg.inv(
+            self.K_XX + self.sigma_noise**2 * np.eye(len(X_train))
+        )
 
         self.X_train = X_train
 
         self.y_train = y_train
         if len(self.y_train.shape) == 1:
             self.y_train = np.expand_dims(self.y_train, axis=1)
-    
+
     def get_train_error_bars(self):
         if self.X_train is None:
             raise ValueError("Please call fit first.")
